@@ -49,6 +49,14 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
+     
+    # --- 新增的校验步骤 ---
+    - name: Prepare and verify config
+      run: |
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE /workdir/.config
+        cd /workdir
+        # 如果你精简了配置，这行命令会帮你修复可能出现的依赖报错
+        make defconfig   
 
     - name: Clone source code
       working-directory: /workdir
