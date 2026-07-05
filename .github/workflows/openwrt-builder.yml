@@ -112,8 +112,8 @@ jobs:
       run: |
         # 修正路径：确保只进入固件输出目录
         cd openwrt/bin/targets/mediatek/filogic
-        # 寻找真实的固件目录 (通常带有一个名字)
-        FIRMWARE_DIR=$(find . -maxdepth 1 -type d ! -name ".")
+        # 寻找真实的固件目录 (通常带有一个名字)，只取第一个
+        FIRMWARE_DIR=$(find . -maxdepth 1 -type d ! -name "." | head -n 1)
         echo "FIRMWARE=$PWD/$FIRMWARE_DIR" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
@@ -132,9 +132,6 @@ jobs:
           openwrt/bin/targets/*/*/*.bin
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.tag.outputs.release_tag }}
-        files: ${{ env.FIRMWARE }}/*
 
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@main
