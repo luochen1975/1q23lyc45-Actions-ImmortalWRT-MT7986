@@ -118,13 +118,18 @@ jobs:
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: Upload firmware to release
+      if: steps.compile.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
       uses: softprops/action-gh-release@master
       with:
         tag_name: OpenWrt-${{ env.FILE_DATE }}
         name: OpenWrt ${{ env.FILE_DATE }}
+        body: |
+          - Device: ${{ env.DEVICE_NAME }}
+          - Date: ${{ env.FILE_DATE }}
         files: |
           openwrt/bin/targets/*/*/*.img.gz
           openwrt/bin/targets/*/*/*.manifest
+          openwrt/bin/targets/*/*/*.bin
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
